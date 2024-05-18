@@ -34,10 +34,25 @@ ApplicationWindow {
             highlighted: true  // Highlight the button with accent color
             Material.elevation: 2  // Apply elevation for shadow effect
             onClicked: {
-                //myModel.setData(myModel.data + 1);
+
+                // TODO:
+                // 1. onclick of 'Connect' button should
+                //      open uart serial port and also start
+                //      streaming of video from video receiver
+                //
+                // 2. Display new button that says 'Start Tracking'
+                //
+                // 3. When 'Start Tracking' button clicked we need to
+                //      initiate the process of allowing user to draw
+                //      bounding box on screen and then send that off to the raspi
+                //      over uart to initiate the tracking process
+                //
+                // 4. Once tracking is in progress we need to display
+                //      a new button that says 'Stop Tracking'
+                //      Once 'Stop Tracking' is pressed we need to send
+                //      'track-end' over to raspi to uart to end the process.
 
                 myModel.onConnect();
-
                 videoPlayer.visible = true  // Make the video player visible
                 videoPlayer.play();  // Start playing the video
                 myModel.openUART();
