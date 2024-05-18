@@ -2,6 +2,7 @@
 #define MODEL_H
 
 #include <QObject>
+#include <QtSerialPort/QSerialPort>
 
 class Model : public QObject {
     Q_OBJECT
@@ -12,12 +13,15 @@ public:
     int data() const; // Getter for the data property
     Q_INVOKABLE void setData(int value);  // Setter for the data property
     Q_INVOKABLE void onConnect();
+    Q_INVOKABLE void openUART();
+    Q_INVOKABLE void writeUART();
 
 signals:
     void dataChanged(); // Signal to be emitted when data changes
 
 private:
     int m_data; // Private member to hold the data
+    QSerialPort serialPort;
 };
 
 #endif // MODEL_H

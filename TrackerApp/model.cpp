@@ -21,3 +21,22 @@ void Model::setData(int value) {
 void Model::onConnect() {
     qDebug() << "Connecting...\n";
 }
+
+void Model::openUART() {
+    serialPort.setPortName("COM3");
+    serialPort.setBaudRate(QSerialPort::Baud9600);
+    serialPort.setDataBits(QSerialPort::Data8);
+    serialPort.setParity(QSerialPort::NoParity);
+    serialPort.setStopBits(QSerialPort::OneStop);
+    // Open serialPort
+    if (!serialPort.open(QIODevice::ReadWrite)) {
+        qDebug() << "Error opening serial port.\n";
+    }
+    else {
+        qDebug() << "Successfully opened UART port on COM3.\n";
+    }
+}
+
+void Model::writeUART() {
+    serialPort.write("track-start 448 261 528 381\n");
+}

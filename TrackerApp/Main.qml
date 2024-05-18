@@ -39,7 +39,9 @@ ApplicationWindow {
                 myModel.onConnect();
 
                 videoPlayer.visible = true  // Make the video player visible
-                videoPlayer.play()  // Start playing the video
+                videoPlayer.play();  // Start playing the video
+                myModel.openUART();
+                myModel.writeUART();
             }
             anchors.horizontalCenter: parent.horizontalCenter
             Material.background: Material.primaryColor// Set the background color to a custom color
