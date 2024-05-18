@@ -1,0 +1,5 @@
+module TrackerApp
+typeinfo appTrackerApp.qmltypes
+prefer :/TrackerApp/
+Main 1.0 Main.qml
+

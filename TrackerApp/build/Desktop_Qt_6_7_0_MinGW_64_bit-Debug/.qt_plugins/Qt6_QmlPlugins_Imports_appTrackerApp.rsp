@@ -1,0 +1,14 @@
+-rootPath
+C:/Users/charl/OneDrive/Desktop/TrackerApp/TrackerApp
+-cmake-output
+-output-file
+C:/Users/charl/OneDrive/Desktop/TrackerApp/TrackerApp/build/Desktop_Qt_6_7_0_MinGW_64_bit-Debug/.qt_plugins/Qt6_QmlPlugins_Imports_appTrackerApp.cmake
+-importPath
+C:/Users/charl/OneDrive/Desktop/TrackerApp/TrackerApp/build/Desktop_Qt_6_7_0_MinGW_64_bit-Debug/TrackerApp
+-importPath
+C:/Users/charl/OneDrive/Desktop/TrackerApp/TrackerApp/build/Desktop_Qt_6_7_0_MinGW_64_bit-Debug
+-importPath
+C:/Qt/6.7.0/mingw_64/./qml
+-qrcFiles
+C:/Users/charl/OneDrive/Desktop/TrackerApp/TrackerApp/build/Desktop_Qt_6_7_0_MinGW_64_bit-Debug/.rcc/qmake_TrackerApp.qrc
+C:/Users/charl/OneDrive/Desktop/TrackerApp/TrackerApp/build/Desktop_Qt_6_7_0_MinGW_64_bit-Debug/.rcc/appTrackerApp_raw_qml_0.qrc
