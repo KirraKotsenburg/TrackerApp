@@ -14,7 +14,7 @@ public:
     Q_INVOKABLE void setData(int value);  // Setter for the data property
     Q_INVOKABLE void onConnect();
     Q_INVOKABLE void openUART();
-    Q_INVOKABLE void writeUART();
+    Q_INVOKABLE void writeUART(const QString &input);
 
 signals:
     void dataChanged(); // Signal to be emitted when data changes

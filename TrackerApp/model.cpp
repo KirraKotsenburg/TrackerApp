@@ -37,6 +37,10 @@ void Model::openUART() {
     }
 }
 
-void Model::writeUART() {
-    serialPort.write("track-start 448 261 528 381\n");
+void Model::writeUART(const QString &input) {
+    //track-start 448 261 528 381\n
+    QByteArray byteArray = input.toUtf8();
+    qDebug() << "byteArray: " << byteArray;
+    serialPort.write(byteArray);
 }
+
