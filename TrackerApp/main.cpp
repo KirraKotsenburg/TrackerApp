@@ -2,6 +2,10 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include "model.h"
+#include <QCamera>
+//#include <QCameraViewfinder> // TODO: figure out how to include this, not in multimedia for some reason
+//#include <QCameraImageCapture> // TODO: figure out how to include this
+
 
 int main(int argc, char *argv[])
 {

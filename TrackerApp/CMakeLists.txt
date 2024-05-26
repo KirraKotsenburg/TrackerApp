@@ -4,44 +4,58 @@ project(TrackerApp VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 6.4 REQUIRED COMPONENTS Quick SerialPort)
-find_package(Qt6 6.4 REQUIRED COMPONENTS Quick)
+# Find required Qt packages, including Multimedia
+find_package(Qt6 6.7.1 REQUIRED COMPONENTS Core Gui Widgets Multimedia Quick SerialPort)
 
+# Standard Qt project setup
 qt_standard_project_setup()
 
+# Define the executable target
 qt_add_executable(appTrackerApp
     main.cpp
 )
 
+# Define the QML module
 qt_add_qml_module(appTrackerApp
     URI TrackerApp
     VERSION 1.0
-    QML_FILES
-        Main.qml
-        SOURCES model.h model.cpp
+    QML_FILES Main.qml
+    SOURCES model.h model.cpp
 )
 
-# Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
-# If you are developing for iOS or macOS you should consider setting an
-# explicit, fixed bundle identifier manually though.
+# Set target properties for macOS and Windows
 set_target_properties(appTrackerApp PROPERTIES
-#    MACOSX_BUNDLE_GUI_IDENTIFIER com.example.appTrackerApp
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
     MACOSX_BUNDLE TRUE
     WIN32_EXECUTABLE TRUE
 )
 
-target_link_libraries(appTrackerApp
-    PRIVATE Qt6::Quick
-)
-target_link_libraries(appTrackerApp
-    PRIVATE Qt6::Quick Qt6::SerialPort
+# Link the necessary Qt libraries
+target_link_libraries(appTrackerApp PRIVATE
+    Qt6::Core
+    Qt6::Gui
+    Qt6::Widgets
+    Qt6::Multimedia
+    Qt6::Quick
+    Qt6::SerialPort
 )
 
+# Include directories for Qt
+target_include_directories(appTrackerApp PRIVATE ${Qt6Multimedia_INCLUDE_DIRS} ${Qt6Widgets_INCLUDE_DIRS})
+
+# Installation settings
+install(TARGETS appTrackerApp
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+)
+
+# Include GNUInstallDirs for standard installation directories
 include(GNUInstallDirs)
 install(TARGETS appTrackerApp
     BUNDLE DESTINATION .
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
+
