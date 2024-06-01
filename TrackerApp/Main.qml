@@ -38,8 +38,9 @@ ApplicationWindow {
 
                 myModel.onConnect();
                 // TODO: below video logic needs to be changed to access video receiver
-                videoPlayer.visible = true  // Make the video player visible
-                videoPlayer.play();  // Start playing the video
+                //videoPlayer.visible = true  // Make the video player visible
+                //videoPlayer.play();  // Start playing the video
+                videoFrame.visible = true; // Make the video frame visible
                 myModel.openUART();
                 connectButton.visible = false;
                 startTrackerButton.visible = true;
@@ -49,12 +50,24 @@ ApplicationWindow {
             Material.foreground: "white" // Set the text color to white
         }
 
-        Video {
-            id: videoPlayer
-            width: parent.width  // Make the video player the same width as the parent
-            height: 300  // Fixed height for the video player
-            source: "C:/Users/charl/OneDrive/Desktop/TrackerApp/TrackerApp/walking.mp4"
-            visible: false
+        // Video {
+        //     id: videoPlayer
+        //     width: parent.width  // Make the video player the same width as the parent
+        //     height: 300  // Fixed height for the video player
+        //     source: "C:/Users/kirra/OneDrive/Desktop/TrackerQTApp/TrackerApp/TrackerApp/walking.mp4"
+        //     visible: false
+        // }
+
+        Image {
+            id: videoFrame
+            width: parent.width
+            height: 300
+            source: "image://myModel/frame"
+            visible: true
+            fillMode: Image.PreserveAspectFit
+            sourceSize.width: videoFrame.width
+            sourceSize.height: videoFrame.height
+            onSourceChanged: console.log("Frame source changed")
         }
 
         Button {
