@@ -4,11 +4,17 @@
 Model::Model(QObject *parent)
     : QObject(parent),
     m_data(0), // Initialize m_data with a default value (0 here)
-    m_timer(new QTimer(this)),
-    m_capture(0)
+    cap(0)
 {
-    connect(m_timer, &QTimer::timeout, this, &Model::captureFrame);
-    m_timer->start(30); // Capture frame every 30 ms
+    cap.set(cv::CAP_PROP_FRAME_WIDTH, 640);
+    cap.set(cv::CAP_PROP_FRAME_HEIGHT, 480);
+
+    if (!cap.isOpened()) {
+        qDebug() << "Cannot open webcam";
+    }
+
+    connect(&timer, &QTimer::timeout, this, &Model::startVideo);
+    timer.start(1000 / 30); // 30 fps
 }
 
 int Model::data() const {
@@ -52,27 +58,17 @@ QImage Model::frame() const {
     return m_frame;
 }
 
-void Model::captureFrame(){
+void Model::startVideo() {
     cv::Mat frame;
-    m_capture >> frame; // Capture a frame
-    if(!frame.empty()){
-        qDebug() << "Frame captured: " << frame.cols << "x" << frame.rows;
+    cap >> frame;
+
+    if (!frame.empty()) {
         m_frame = matToQImage(frame);
-        emit frameChanged(); // Emit the frameChanged signal
-        qDebug() << "frameChanged signal emitted";
+        emit frameChanged();
     }
 }
 
-QImage Model::matToQImage(const cv::Mat &mat){
-    // Convert cv::Mat to QImage
-    QImage img;
-    if (mat.type() == CV_8UC3) {
-        img = QImage(mat.data, mat.cols, mat.rows, mat.step, QImage::Format_RGB888).rgbSwapped();
-    } else if (mat.type() == CV_8UC1) {
-        img = QImage(mat.data, mat.cols, mat.rows, mat.step, QImage::Format_Grayscale8);
-    }
-    qDebug() << "Converted frame to QImage: " << img.size();
-    return img;
+QImage Model::matToQImage(const cv::Mat &mat) {
+    return QImage(mat.data, mat.cols, mat.rows, mat.step, QImage::Format_BGR888).copy();
 }
-
 

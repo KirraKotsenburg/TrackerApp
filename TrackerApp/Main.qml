@@ -36,11 +36,12 @@ ApplicationWindow {
             Material.elevation: 2  // Apply elevation for shadow effect
             onClicked: {
 
-                myModel.onConnect();
+                //myModel.onConnect();
+                myModel.startVideo();
                 // TODO: below video logic needs to be changed to access video receiver
                 //videoPlayer.visible = true  // Make the video player visible
                 //videoPlayer.play();  // Start playing the video
-                videoFrame.visible = true; // Make the video frame visible
+                //videoFrame.visible = true; // Make the video frame visible
                 myModel.openUART();
                 connectButton.visible = false;
                 startTrackerButton.visible = true;

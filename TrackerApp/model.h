@@ -6,6 +6,7 @@
 #include <QImage>
 #include <QTimer>
 #include <opencv2/opencv.hpp>
+#include <QLabel>
 
 class Model : public QObject {
     Q_OBJECT
@@ -19,25 +20,24 @@ public:
     Q_INVOKABLE void onConnect();
     Q_INVOKABLE void openUART();
     Q_INVOKABLE void writeUART(const QString &input);
+    QImage frame() const;
 
-    QImage frame() const; // Getter for the frame property
+public slots:
+    void startVideo();
 
 signals:
     void dataChanged(); // Signal to be emitted when data changes
-    void frameChanged(); // Signal to be emmited when frame changes
-
-private slots:
-    void captureFrame(); // Slot to capture video frames
+    void frameChanged();
 
 private:
     int m_data; // Private member to hold the data
     QSerialPort serialPort;
 
-    QTimer *m_timer; // Timer to capture frames at intervals
-    QImage m_frame; // Holds the current frame
-    cv::VideoCapture m_capture; // OpenCV video capture
+    QImage matToQImage(const cv::Mat &mat);
 
-    QImage matToQImage(const cv::Mat &mat); // Helper to convert cv::Mat to QImage
+    cv::VideoCapture cap;
+    QTimer timer;
+    QImage m_frame;
 };
 
 #endif // MODEL_H

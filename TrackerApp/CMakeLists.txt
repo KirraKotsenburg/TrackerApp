@@ -32,6 +32,7 @@ qt_add_qml_module(appTrackerApp
     VERSION 1.0
     QML_FILES Main.qml
     SOURCES model.h model.cpp
+    SOURCES
 )
 
 # Set target properties for macOS and Windows
