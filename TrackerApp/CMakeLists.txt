@@ -5,7 +5,7 @@ project(TrackerApp VERSION 0.1 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Set the path to your OpenCV build directory
-set(OpenCV_DIR "C:/opencv/opencv/build")
+set(OpenCV_DIR "D:/opencv/build")
 
 # Find required Qt packages, including Multimedia
 find_package(Qt6 6.7.1 REQUIRED COMPONENTS Core Gui Widgets Multimedia Quick SerialPort)
@@ -32,7 +32,8 @@ qt_add_qml_module(appTrackerApp
     VERSION 1.0
     QML_FILES Main.qml
     SOURCES model.h model.cpp
-    SOURCES
+    SOURCES imageprovider.h imageprovider.cpp
+    RESOURCES images/captured_frame.png
 )
 
 # Set target properties for macOS and Windows

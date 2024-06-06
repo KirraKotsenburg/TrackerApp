@@ -59,17 +59,46 @@ ApplicationWindow {
         //     visible: false
         // }
 
+        Button {
+            id: saveButton
+            text: "Save Frame"
+            width: 150  // Width of the button in pixels
+            height: 50   // Height of the button in pixels
+            highlighted: true  // Highlight the button with accent color
+            Material.elevation: 2  // Apply elevation for shadow effect
+            onClicked: {
+                myModel.saveFrame("../../captured_frame.png");
+            }
+            anchors.horizontalCenter: parent.horizontalCenter
+            Material.background: Material.primaryColor // Set the background color to a custom color
+            Material.foreground: "white" // Set the text color to white
+        }
+
         Image {
             id: videoFrame
             width: parent.width
             height: 300
-            source: "image://myModel/frame"
+            source: "myModel/frame" // Ensure this matches the provider name
             visible: true
             fillMode: Image.PreserveAspectFit
             sourceSize.width: videoFrame.width
             sourceSize.height: videoFrame.height
-            onSourceChanged: console.log("Frame source changed")
+            onSourceChanged: {
+                console.log("Frame source changed");
+                console.log("New source: " + videoFrame.source);
+            }
         }
+
+        // This shows image:
+        // Image {
+        //     id: imageFrame
+        //     width: parent.width
+        //     height: 300
+        //     source: "images/captured_frame.png"  // Use the correct resource path
+        //     visible: true
+        //     fillMode: Image.PreserveAspectFit
+        //     onSourceChanged: console.log("Image source changed to: " + imageFrame.source)
+        // }
 
         Button {
             id: startTrackerButton

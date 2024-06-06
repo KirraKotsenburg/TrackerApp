@@ -12,6 +12,9 @@ Model::Model(QObject *parent)
     if (!cap.isOpened()) {
         qDebug() << "Cannot open webcam";
     }
+    else {
+        qDebug() << "Webcam opened";
+    }
 
     connect(&timer, &QTimer::timeout, this, &Model::startVideo);
     timer.start(1000 / 30); // 30 fps
@@ -55,20 +58,63 @@ void Model::writeUART(const QString &input) {
 }
 
 QImage Model::frame() const {
+    qDebug() << "returning frame from model...";
     return m_frame;
 }
 
 void Model::startVideo() {
     cv::Mat frame;
     cap >> frame;
-
     if (!frame.empty()) {
         m_frame = matToQImage(frame);
         emit frameChanged();
+        qDebug() << "Frame captured and signal emitted";
+    } else {
+        qDebug() << "No frame captured";
     }
 }
 
 QImage Model::matToQImage(const cv::Mat &mat) {
-    return QImage(mat.data, mat.cols, mat.rows, mat.step, QImage::Format_BGR888).copy();
+    // Convert cv::Mat to QImage
+    switch (mat.type()) {
+    case CV_8UC4: {
+        // qDebug() << "mat type is CV_8UC4 " << CV_8UC4;
+        QImage image(mat.data, mat.cols, mat.rows, mat.step, QImage::Format_ARGB32);
+        return image.copy();
+    }
+    case CV_8UC3: {
+        // ITS THIS ONE
+        // qDebug() << "mat type is CV_8UC3 " << CV_8UC3;
+        QImage image(mat.data, mat.cols, mat.rows, mat.step, QImage::Format_RGB888);
+        // image.rgbSwapped().save("C:/Users/charl/OneDrive/Desktop/TrackerApp/TrackerApp");
+        return image.rgbSwapped();
+    }
+    case CV_8UC1: {
+        // qDebug() << "mat type is CV_8UC1 " << CV_8UC1;
+        static QVector<QRgb>  colorTable;
+        if (colorTable.isEmpty()) {
+            for (int i = 0; i < 256; ++i)
+                colorTable.push_back(qRgb(i, i, i));
+        }
+        QImage image(mat.data, mat.cols, mat.rows, mat.step, QImage::Format_Indexed8);
+        image.setColorTable(colorTable);
+        return image.copy();
+    }
+    default:
+        break;
+    }
+    return QImage();
+}
+
+void Model::saveFrame(const QString &fileName) {
+    if (!m_frame.isNull()) {
+        if (m_frame.save(fileName)) {
+            qDebug() << "Frame saved to" << fileName;
+        } else {
+            qDebug() << "Failed to save frame to" << fileName;
+        }
+    } else {
+        qDebug() << "No frame to save";
+    }
 }
 

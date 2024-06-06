@@ -20,6 +20,7 @@ public:
     Q_INVOKABLE void onConnect();
     Q_INVOKABLE void openUART();
     Q_INVOKABLE void writeUART(const QString &input);
+    Q_INVOKABLE void saveFrame(const QString &fileName); // Method to save the frame
     QImage frame() const;
 
 public slots:
