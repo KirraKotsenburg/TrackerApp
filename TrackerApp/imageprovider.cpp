@@ -5,6 +5,7 @@ ImageProvider::ImageProvider()
     : QQuickImageProvider(QQuickImageProvider::Image) {}
 
 QImage ImageProvider::requestImage(const QString &id, QSize *size, const QSize &requestedSize) {
+    qDebug() << "REQUEST IMAGE CALLED!";
     Q_UNUSED(id);
     if (size)
         *size = m_image.size();

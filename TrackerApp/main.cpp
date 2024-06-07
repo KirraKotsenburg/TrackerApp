@@ -16,12 +16,18 @@ int main(int argc, char *argv[]) {
 
     ImageProvider *imageProvider = new ImageProvider();
     // Register the image provider with the engine
-    engine.addImageProvider("myModel", imageProvider);
+    engine.addImageProvider("imageProvider", imageProvider);
 
     // Connect frameChanged signal to update image in the provider
     QObject::connect(&myModel, &Model::frameChanged, [&myModel, imageProvider]() {
         imageProvider->setImage(myModel.frame());
         qDebug() << "Frame changed and image provider updated";
+    });
+
+    // Connect imageUpdated signal to a QML slot
+    QObject::connect(&myModel, &Model::imageUpdated, &engine, [&engine]() {
+        QObject *rootObject = engine.rootObjects().first();
+        QMetaObject::invokeMethod(rootObject, "updateImageSource");
     });
 
     // Load the main QML file

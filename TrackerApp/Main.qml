@@ -14,6 +14,10 @@ ApplicationWindow {
     Material.theme: Material.Dark  // Choose between Light, Dark, or System themes
     Material.primary: "0096FF"
 
+    function updateImageSource() {
+        videoFrame.source = "image://imageProvider/frame?cache=" + Date.now();
+    }
+
     Column {
         anchors.fill: parent
         anchors.margins: 20
@@ -78,14 +82,11 @@ ApplicationWindow {
             id: videoFrame
             width: parent.width
             height: 300
-            source: "myModel/frame" // Ensure this matches the provider name
+            source: "image://imageProvider/frame"  // Correct provider path
             visible: true
             fillMode: Image.PreserveAspectFit
-            sourceSize.width: videoFrame.width
-            sourceSize.height: videoFrame.height
             onSourceChanged: {
-                console.log("Frame source changed");
-                console.log("New source: " + videoFrame.source);
+                console.log("Frame source changed to: " + videoFrame.source);
             }
         }
 

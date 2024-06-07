@@ -69,6 +69,7 @@ void Model::startVideo() {
         m_frame = matToQImage(frame);
         emit frameChanged();
         qDebug() << "Frame captured and signal emitted";
+        emit imageUpdated();
     } else {
         qDebug() << "No frame captured";
     }
