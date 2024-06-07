@@ -14,6 +14,10 @@ ApplicationWindow {
     Material.theme: Material.Dark  // Choose between Light, Dark, or System themes
     Material.primary: "0096FF"
 
+    function updateImageSource() {
+        videoFrame.source = "image://imageProvider/frame?cache=" + Date.now();
+    }
+
     Column {
         anchors.fill: parent
         anchors.margins: 20
@@ -35,11 +39,7 @@ ApplicationWindow {
             highlighted: true  // Highlight the button with accent color
             Material.elevation: 2  // Apply elevation for shadow effect
             onClicked: {
-
-                myModel.onConnect();
-                // TODO: below video logic needs to be changed to access video receiver
-                videoPlayer.visible = true  // Make the video player visible
-                videoPlayer.play();  // Start playing the video
+                myModel.startVideo();
                 myModel.openUART();
                 connectButton.visible = false;
                 startTrackerButton.visible = true;
@@ -49,12 +49,16 @@ ApplicationWindow {
             Material.foreground: "white" // Set the text color to white
         }
 
-        Video {
-            id: videoPlayer
-            width: parent.width  // Make the video player the same width as the parent
-            height: 300  // Fixed height for the video player
-            source: "C:/Users/charl/OneDrive/Desktop/TrackerApp/TrackerApp/walking.mp4"
-            visible: false
+        Image {
+            id: videoFrame
+            width: parent.width
+            height: 300
+            source: "image://imageProvider/frame"  // Correct provider path
+            visible: true
+            fillMode: Image.PreserveAspectFit
+            onSourceChanged: {
+                console.log("Frame source changed to: " + videoFrame.source);
+            }
         }
 
         Button {
