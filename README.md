@@ -13,7 +13,7 @@ OpenCv With QT Creator:
     QT Creator wiki instructions:
       https://wiki.qt.io/How_to_setup_Qt_and_openCV_on_Windows
   
-    Video with steps for set up:
+   Video with steps for set up:
       https://m.youtube.com/watch?v=0KNh_7fUqrM
   
   Step 1: Install OpenCV -> https://sourceforge.net/projects/opencvlibrary/
