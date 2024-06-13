@@ -1,20 +1,17 @@
 # TrackerApp
 Mobile Tracking project app for user
 
-Qt Creator Open Source download link:
-  https://www.qt.io/download-qt-installer-oss?utm_referrer=https%3A%2F%2Fwww.qt.io%2Fdownload-open-source
+[Qt Creator Open Source download link](https://www.qt.io/download-qt-installer-oss?utm_referrer=https%3A%2F%2Fwww.qt.io%2Fdownload-open-source)
 
   After you have downloaded QT Creator, select the version you want installed in the QT Maintanence app
   **As of 6/12/24 we are using version 6.7.1
 
-OpenCv With QT Creator:
+### OpenCv With QT Creator:
 
   Helpful Links
-    QT Creator wiki instructions:
-      https://wiki.qt.io/How_to_setup_Qt_and_openCV_on_Windows
+    [QT Creator wiki instructions](https://wiki.qt.io/How_to_setup_Qt_and_openCV_on_Windows)
   
-   Video with steps for set up:
-      https://m.youtube.com/watch?v=0KNh_7fUqrM
+   [Video with steps for set up](https://m.youtube.com/watch?v=0KNh_7fUqrM)
   
   Step 1: Install OpenCV -> https://sourceforge.net/projects/opencvlibrary/
   
