@@ -39,7 +39,7 @@ ApplicationWindow {
             highlighted: true  // Highlight the button with accent color
             Material.elevation: 2  // Apply elevation for shadow effect
             onClicked: {
-                myModel.startVideo();
+                myModel.onConnect(); // For Video Visibility after button click
                 myModel.openUART();
                 connectButton.visible = false;
                 startTrackerButton.visible = true;
