@@ -51,8 +51,8 @@ ApplicationWindow {
 
         Image {
             id: videoFrame
-            width: parent.width
-            height: 300
+            width: 720 //parent.width
+            height: 480
             source: "image://imageProvider/frame"  // Correct provider path
             visible: true
             fillMode: Image.PreserveAspectFit
@@ -83,6 +83,7 @@ ApplicationWindow {
                     console.log("Coordinates: ", p1, p2);
                     // You can use p1 and p2 to send coordinates over UART
                     myModel.writeUART("track-start " + p1.x + " " + p1.y + " " + p2.x + " " + p2.y + "\n");
+                    console.log("track-start " + p1.x + " " + p1.y + " " + p2.x + " " + p2.y + "\n")
                     mainText.text = "Tracking in progress";
                     stopTrackerButton.visible = true;
                     startTrackerButton.visible = false;
@@ -113,7 +114,6 @@ ApplicationWindow {
                 // TODO: write logic to allow user to draw bbox and get p1 and p2 coordinates from it
                 // pass message over uart with x1,y1 x2,y2 data
                 mouseArea.enabled = true;  // Enable mouse area for drawing bounding box
-                myModel.writeUART("track-start 448 261 528 381\n");
                 mainText.text = "Tracking in progress";
                 stopTrackerButton.visible = true;
             }
