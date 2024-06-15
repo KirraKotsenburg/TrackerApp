@@ -39,7 +39,7 @@ ApplicationWindow {
             highlighted: true  // Highlight the button with accent color
             Material.elevation: 2  // Apply elevation for shadow effect
             onClicked: {
-                myModel.startVideo();
+                myModel.onConnect(); // For Video Visibility after button click
                 myModel.openUART();
                 connectButton.visible = false;
                 startTrackerButton.visible = true;
@@ -51,13 +51,52 @@ ApplicationWindow {
 
         Image {
             id: videoFrame
-            width: parent.width
-            height: 300
+            width: 720 //parent.width
+            height: 480
             source: "image://imageProvider/frame"  // Correct provider path
             visible: true
             fillMode: Image.PreserveAspectFit
             onSourceChanged: {
                 console.log("Frame source changed to: " + videoFrame.source);
+            }
+
+            MouseArea {
+                id: mouseArea
+                anchors.fill: parent
+                enabled: false
+
+                onPressed: {
+                    rect.x = mouse.x;
+                    rect.y = mouse.y;
+                    rect.width = 0;
+                    rect.height = 0;
+                }
+
+                onPositionChanged: {
+                    rect.width = mouse.x - rect.x;
+                    rect.height = mouse.y - rect.y;
+                }
+
+                onReleased: {
+                    var p1 = Qt.point(Math.floor(rect.x), Math.floor(rect.y));
+                    var p2 = Qt.point(Math.floor(rect.x + rect.width), Math.floor(rect.y + rect.height));
+                    console.log("Coordinates: ", p1, p2);
+                    // You can use p1 and p2 to send coordinates over UART
+                    myModel.writeUART("track-start " + p1.x + " " + p1.y + " " + p2.x + " " + p2.y + "\n");
+                    console.log("track-start " + p1.x + " " + p1.y + " " + p2.x + " " + p2.y + "\n")
+                    mainText.text = "Tracking in progress";
+                    stopTrackerButton.visible = true;
+                    startTrackerButton.visible = false;
+                    mouseArea.enabled = false;
+                }
+
+                Rectangle {
+                    id: rect
+                    color: "transparent"
+                    border.color: "red"
+                    border.width: 2
+                    visible: mouseArea.enabled
+                }
             }
         }
 
@@ -74,7 +113,7 @@ ApplicationWindow {
                 mainText.text = "Draw bounding box around object you would like to track."
                 // TODO: write logic to allow user to draw bbox and get p1 and p2 coordinates from it
                 // pass message over uart with x1,y1 x2,y2 data
-                myModel.writeUART("track-start 448 261 528 381\n");
+                mouseArea.enabled = true;  // Enable mouse area for drawing bounding box
                 mainText.text = "Tracking in progress";
                 stopTrackerButton.visible = true;
             }
