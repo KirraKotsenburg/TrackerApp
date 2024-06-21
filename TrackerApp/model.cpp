@@ -43,6 +43,10 @@ void Model::openUART() {
     serialPort.setDataBits(QSerialPort::Data8);
     serialPort.setParity(QSerialPort::NoParity);
     serialPort.setStopBits(QSerialPort::OneStop);
+
+    // Connect the readyRead signal to a slot
+    connect(&serialPort, &QSerialPort::readyRead, this, &Model::readUART);
+
     // Open serialPort
     if (!serialPort.open(QIODevice::ReadWrite)) {
         qDebug() << "Error opening serial port.\n";
@@ -57,6 +61,18 @@ void Model::writeUART(const QString &input) {
     QByteArray byteArray = input.toUtf8();
     qDebug() << "byteArray: " << byteArray;
     serialPort.write(byteArray);
+}
+
+void Model::readUART() {
+    while (serialPort.canReadLine()) {
+        QByteArray line = serialPort.readLine();
+        qDebug() << "Received UART data: " << line;
+
+        // TODO: Process the received data as needed
+        // Handle error code sent from raspi
+
+
+    }
 }
 
 QImage Model::frame() const {

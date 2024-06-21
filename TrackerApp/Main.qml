@@ -40,7 +40,7 @@ ApplicationWindow {
             Material.elevation: 2  // Apply elevation for shadow effect
             onClicked: {
                 myModel.onConnect(); // For Video Visibility after button click
-                myModel.openUART();
+                myModel.openUART(); // For read and write to UART
                 connectButton.visible = false;
                 startTrackerButton.visible = true;
             }
