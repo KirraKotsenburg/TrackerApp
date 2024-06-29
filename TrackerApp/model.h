@@ -31,6 +31,7 @@ signals:
     void dataChanged(); // Signal to be emitted when data changes
     void frameChanged();
     void imageUpdated();
+    void trackFail();
 
 private:
     int m_data; // Private member to hold the data

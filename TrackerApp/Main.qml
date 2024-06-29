@@ -6,8 +6,8 @@ import QtMultimedia 6.7
 
 ApplicationWindow {
     visible: true
-    width: 640
-    height: 700
+    width: 740
+    height: 800
     title: "Mobile Tracking System"
 
     // Setting a Material style theme
@@ -25,7 +25,7 @@ ApplicationWindow {
 
         Text {
             id: mainText
-            text: "Welcome!"
+            text: "Mobile Tracking System"
             font.pixelSize: 46
             anchors.horizontalCenter: parent.horizontalCenter
             color: Material.primaryColor  // Use accent color for the text
@@ -33,7 +33,7 @@ ApplicationWindow {
 
         Button {
             id: connectButton
-            text: "Connect"
+            text: "Connect Video"
             width: 150  // Width of the button in pixels
             height: 50   // Height of the button in pixels
             highlighted: true  // Highlight the button with accent color
@@ -56,9 +56,9 @@ ApplicationWindow {
             source: "image://imageProvider/frame"  // Correct provider path
             visible: true
             fillMode: Image.PreserveAspectFit
-            onSourceChanged: {
-                console.log("Frame source changed to: " + videoFrame.source);
-            }
+            // onSourceChanged: {
+            //     console.log("Frame source changed to: " + videoFrame.source);
+            // }
 
             MouseArea {
                 id: mouseArea
@@ -118,7 +118,7 @@ ApplicationWindow {
                 stopTrackerButton.visible = true;
             }
             anchors.horizontalCenter: parent.horizontalCenter
-            Material.background: Material.primaryColor// Set the background color to a custom color
+            Material.background: "green" // Set the background color to a custom color
             Material.foreground: "white" // Set the text color to white
             visible: false
         }
@@ -133,14 +133,26 @@ ApplicationWindow {
             onClicked: {
                 stopTrackerButton.visible = false;
                 connectButton.visible = true;
-                mainText.text = "Welcome!";
+                mainText.text = "Mobile Tracking System";
                 mainText.font.pixelSize = 24;
                 myModel.writeUART("track-end\n")
             }
             anchors.horizontalCenter: parent.horizontalCenter
-            Material.background: Material.primaryColor// Set the background color to a custom color
+            Material.background: "red" // Set the background color to a custom color
             Material.foreground: "white" // Set the text color to white
             visible: false
+        }
+
+        // For failed tracking from raspi
+        Connections {
+            target: myModel
+            onTrackFail: {
+                console.log("Tracking failed");
+                mainText.text = "Tracking failed. Please try again.";
+                startTrackerButton.visible = true;
+                stopTrackerButton.visible = false;
+                mouseArea.enabled = false;
+            }
         }
 
     }
