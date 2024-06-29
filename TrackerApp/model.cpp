@@ -43,6 +43,10 @@ void Model::openUART() {
     serialPort.setDataBits(QSerialPort::Data8);
     serialPort.setParity(QSerialPort::NoParity);
     serialPort.setStopBits(QSerialPort::OneStop);
+
+    // Connect the readyRead signal to a slot
+    connect(&serialPort, &QSerialPort::readyRead, this, &Model::readUART);
+
     // Open serialPort
     if (!serialPort.open(QIODevice::ReadWrite)) {
         qDebug() << "Error opening serial port.\n";
@@ -59,8 +63,26 @@ void Model::writeUART(const QString &input) {
     serialPort.write(byteArray);
 }
 
+void Model::readUART() {
+    while (serialPort.canReadLine()) {
+        QByteArray line = serialPort.readLine();
+        qDebug() << "Received UART data: " << line;
+        //Some sort of logic for a tracking failed signal from raspi
+
+        if(line == "track-fail\n"){
+            emit trackFail();
+            qDebug() << "ERROR: Tracking has Failed!!!";
+        }
+
+        // TODO: Process the received data as needed
+        // Handle error code sent from raspi
+
+
+    }
+}
+
 QImage Model::frame() const {
-    qDebug() << "returning frame from model...";
+    //qDebug() << "returning frame from model...";
     return m_frame;
 }
 
@@ -70,7 +92,7 @@ void Model::startVideo() {
     if (!frame.empty()) {
         m_frame = matToQImage(frame);
         emit frameChanged();
-        qDebug() << "Frame captured and signal emitted";
+        //qDebug() << "Frame captured and signal emitted";
         emit imageUpdated();
     } else {
         qDebug() << "No frame captured";

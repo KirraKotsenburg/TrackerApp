@@ -20,6 +20,7 @@ public:
     Q_INVOKABLE void onConnect();
     Q_INVOKABLE void openUART();
     Q_INVOKABLE void writeUART(const QString &input);
+    Q_INVOKABLE void readUART();
     Q_INVOKABLE void saveFrame(const QString &fileName); // Method to save the frame
     QImage frame() const;
 
@@ -30,6 +31,7 @@ signals:
     void dataChanged(); // Signal to be emitted when data changes
     void frameChanged();
     void imageUpdated();
+    void trackFail();
 
 private:
     int m_data; // Private member to hold the data
