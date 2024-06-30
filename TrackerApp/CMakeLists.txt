@@ -5,10 +5,12 @@ project(TrackerApp VERSION 0.1 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Set the path to your OpenCV build directory
-set(OpenCV_DIR "C:/opencv/opencv/build")
+set(OPENCV_PATH $ENV{OPENCV_PATH})
+set(QT_V $ENV{QT_VERSION})
+set(OpenCV_DIR ${OPENCV_PATH})
 
 # Find required Qt packages, including Multimedia
-find_package(Qt6 6.7.1 REQUIRED COMPONENTS Core Gui Widgets Multimedia Quick SerialPort)
+find_package(Qt6 ${QT_V} REQUIRED COMPONENTS Core Gui Widgets Multimedia Quick SerialPort)
 find_package(OpenCV REQUIRED PATHS ${OpenCV_DIR})
 
 if(OpenCV_FOUND)

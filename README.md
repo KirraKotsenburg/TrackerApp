@@ -6,6 +6,15 @@ Mobile Tracking project app for user
   After you have downloaded QT Creator, select the version you want installed in the QT Maintanence app
   **As of 6/12/24 we are using version 6.7.1
 
+### Environment Variables Needed
+- OPENCV_PATH
+- QT_VERSION
+
+Type env in your windows search bar and open "Edit system environment variables" <br>
+Click on the "Environment Variables..." button <br>
+Click "New" <br>
+Add the variable name and your value e.g. OPENCV_PATH for variable name and C:/opencv/build for variable value
+
 ### OpenCv With QT Creator:
 
   Helpful Links
