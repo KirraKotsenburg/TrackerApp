@@ -78,16 +78,19 @@ ApplicationWindow {
                 }
 
                 onReleased: {
+                    mainText.text = "Tracking in progress";
                     var p1 = Qt.point(Math.floor(rect.x), Math.floor(rect.y));
                     var p2 = Qt.point(Math.floor(rect.x + rect.width), Math.floor(rect.y + rect.height));
                     console.log("Coordinates: ", p1, p2);
                     // You can use p1 and p2 to send coordinates over UART
-                    myModel.writeUART("track-start " + p1.x + " " + p1.y + " " + p2.x + " " + p2.y + "\n");
+                    myModel.writeUART("R track-start " + p1.x + " " + p1.y + " " + p2.x + " " + p2.y + "\n");
                     console.log("track-start " + p1.x + " " + p1.y + " " + p2.x + " " + p2.y + "\n")
+                    mainText.color = "violet"
                     mainText.text = "Tracking in progress";
                     stopTrackerButton.visible = true;
                     startTrackerButton.visible = false;
                     mouseArea.enabled = false;
+                    stopTrackerButton.visible = true;
                 }
 
                 Rectangle {
@@ -110,12 +113,11 @@ ApplicationWindow {
             onClicked: {
                 startTrackerButton.visible = false;
                 mainText.font.pixelSize = 24;
+                mainText.color = "violet"
                 mainText.text = "Draw bounding box around object you would like to track."
                 // TODO: write logic to allow user to draw bbox and get p1 and p2 coordinates from it
                 // pass message over uart with x1,y1 x2,y2 data
-                mouseArea.enabled = true;  // Enable mouse area for drawing bounding box
-                mainText.text = "Tracking in progress";
-                stopTrackerButton.visible = true;
+                mouseArea.enabled = true;  // Enable mouse area for drawing bounding box       
             }
             anchors.horizontalCenter: parent.horizontalCenter
             Material.background: "green" // Set the background color to a custom color
@@ -132,10 +134,13 @@ ApplicationWindow {
             Material.elevation: 2  // Apply elevation for shadow effect
             onClicked: {
                 stopTrackerButton.visible = false;
-                connectButton.visible = true;
+                mainText.color = "violet"
                 mainText.text = "Mobile Tracking System";
                 mainText.font.pixelSize = 24;
-                myModel.writeUART("track-end\n")
+                myModel.writeUART("R track-end\n")
+                startTrackerButton.visible = true;
+                rect.width = 0;  // Reset width
+                rect.height = 0;  // Reset height
             }
             anchors.horizontalCenter: parent.horizontalCenter
             Material.background: "red" // Set the background color to a custom color
@@ -148,10 +153,13 @@ ApplicationWindow {
             target: myModel
             onTrackFail: {
                 console.log("Tracking failed");
+                mainText.color = "red"
                 mainText.text = "Tracking failed. Please try again.";
                 startTrackerButton.visible = true;
                 stopTrackerButton.visible = false;
                 mouseArea.enabled = false;
+                rect.width = 0;  // Reset width
+                rect.height = 0;  // Reset height
             }
         }
 

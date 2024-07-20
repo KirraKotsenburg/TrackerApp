@@ -69,7 +69,7 @@ void Model::readUART() {
         qDebug() << "Received UART data: " << line;
         //Some sort of logic for a tracking failed signal from raspi
 
-        if(line == "track-fail\n"){
+        if(line == "D track-fail\n"){
             emit trackFail();
             qDebug() << "ERROR: Tracking has Failed!!!";
         }
