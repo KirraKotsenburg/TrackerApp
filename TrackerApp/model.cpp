@@ -39,7 +39,7 @@ void Model::onConnect() {
 
 void Model::openUART() {
     serialPort.setPortName("COM5");
-    serialPort.setBaudRate(QSerialPort::Baud9600);
+    serialPort.setBaudRate(QSerialPort::Baud115200); // Changed 9600 to 115200
     serialPort.setDataBits(QSerialPort::Data8);
     serialPort.setParity(QSerialPort::NoParity);
     serialPort.setStopBits(QSerialPort::OneStop);
