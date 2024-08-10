@@ -83,12 +83,9 @@ ApplicationWindow {
                     var p2 = Qt.point(Math.floor(rect.x + rect.width), Math.floor(rect.y + rect.height));
                     console.log("Coordinates: ", p1, p2);
 
+                // These two lines will send the payload over UART
                     var payload = "R track-start " + p1.x + " " + p1.y + " " + p2.x + " " + p2.y + "\n";
-                    //var msgID = 'e';
                     myModel.payloadPrepare(payload, 101); // 101 is the ACII value of 'e'
-                    // You can use p1 and p2 to send coordinates over UART
-                    // myModel.writeUART(preparedPayload);
-                    // console.log(preparedPayload)
 
                     mainText.color = "violet"
                     mainText.text = "Tracking in progress";
@@ -143,10 +140,9 @@ ApplicationWindow {
                 mainText.text = "Mobile Tracking System";
                 mainText.font.pixelSize = 24;
 
+            // These two lines will send the payload over UART
                 var payload = "R track-end\n";
-                myModel.payloadPrepare(payload, 102);// 102 is the ACII value of 'e'
-                // myModel.writeUART(preparedPayload);
-                // console.log(preparedPayload)
+                myModel.payloadPrepare(payload, 102);// 102 is the ACII value of 'f'
 
                 startTrackerButton.visible = true;
                 rect.width = 0;  // Reset width

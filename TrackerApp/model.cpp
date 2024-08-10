@@ -37,6 +37,11 @@ void Model::onConnect() {
     timer.start(1000 / 30); // 30 fps
 }
 
+/*
+ * Function for setting up UART:
+ * Opens Serial Port for UART, sets the Baud, ect.
+ * COM6 is Nick's UART, COM5 is Char's
+ */
 void Model::openUART() {
     serialPort.setPortName("COM6"); // COM6 for Nick's, COM 5 for Char's
     serialPort.setBaudRate(QSerialPort::Baud115200); // Changed 9600 to 115200
@@ -57,11 +62,10 @@ void Model::openUART() {
 }
 
 /*
-Prepares the payload for sending, by filling a buffer with the required header
-A pre-assigned region of memory of size (payload_bytes + 5) must be reserved. The first byte of this buffer is passed to char* buffer.
-The payload is a series of arbitrary bytes, total bytes in payload must be less than 62.
-messageID should match the purpose of the message, as defined by external documentation
-
+* Prepares the payload for sending, by filling a buffer with the required header
+* A pre-assigned region of memory of size (payload_bytes + 5) must be reserved. The first byte of this buffer is passed to char* buffer.
+* The payload is a series of arbitrary bytes, total bytes in payload must be less than 62.
+* messageID should match the purpose of the message, as defined by external documentation
 */
 void Model::payloadPrepare(const QString& payload, char messageID) {
     // Calculate the number of characters in the payload (UTF-8 encoded size)
@@ -89,7 +93,7 @@ void Model::payloadPrepare(const QString& payload, char messageID) {
     // Copy the payload into the buffer starting from index 5
     memcpy(buffer.data() + 5, encodedPayload.data(), encodedPayload.size());
 
-    // Debugging outputs
+    // Debugging outputs (Can remove/comment this out to make terminal output less busy)
     qDebug() << "Buffer 1 (Payload Size Low Byte): " << static_cast<int>(buffer[1]);
     qDebug() << "Buffer 2 (Payload Size High Byte): " << static_cast<int>(buffer[2]);
     qDebug() << "Buffer 3 (Two's Complement): " << static_cast<int>(buffer[3]);
@@ -102,36 +106,31 @@ void Model::payloadPrepare(const QString& payload, char messageID) {
     writeUART(buffer);
 }
 
-
-// void Model::writeUART(const QString &input) {
-//     //track-start 448 261 528 381\n
-//     QByteArray byteArray = input.toUtf8();
-//     qDebug() << "byteArray: " << byteArray;
-//     serialPort.write(byteArray);
-// }
+/*
+* Writes our buffer containing the command message over
+* UART to the raspi
+*/
     void Model::writeUART(const QByteArray &data) {
         qDebug() << "Writing data to UART: " << data;
         serialPort.write(data);
     }
 
+/*
+* Reads UART message sent from the Raspi
+* Should only be receiving Track-Fail message
+*/
+    void Model::readUART() {
+        while (serialPort.canReadLine()) {
+            QByteArray line = serialPort.readLine();
+            qDebug() << "Received UART data: " << line;
+            //Some sort of logic for a tracking failed signal from raspi
 
-void Model::readUART() {
-    while (serialPort.canReadLine()) {
-        QByteArray line = serialPort.readLine();
-        qDebug() << "Received UART data: " << line;
-        //Some sort of logic for a tracking failed signal from raspi
-
-        if(line == "D track-fail\n"){
-            emit trackFail();
-            qDebug() << "ERROR: Tracking has Failed!!!";
+            if(line == "D track-fail\n"){
+                emit trackFail();
+                qDebug() << "ERROR: Tracking has Failed!!!";
+            }
         }
-
-        // TODO: Process the received data as needed
-        // Handle error code sent from raspi
-
-
     }
-}
 
 QImage Model::frame() const {
     //qDebug() << "returning frame from model...";
