@@ -82,9 +82,13 @@ ApplicationWindow {
                     var p1 = Qt.point(Math.floor(rect.x), Math.floor(rect.y));
                     var p2 = Qt.point(Math.floor(rect.x + rect.width), Math.floor(rect.y + rect.height));
                     console.log("Coordinates: ", p1, p2);
+
+                    var payload = "R track-start " + p1.x + " " + p1.y + " " + p2.x + " " + p2.y + "\n";
+                    myModel.payloadPrepare(payload, 'e');
                     // You can use p1 and p2 to send coordinates over UART
-                    myModel.writeUART("R track-start " + p1.x + " " + p1.y + " " + p2.x + " " + p2.y + "\n");
-                    console.log("track-start " + p1.x + " " + p1.y + " " + p2.x + " " + p2.y + "\n")
+                    // myModel.writeUART(preparedPayload);
+                    // console.log(preparedPayload)
+
                     mainText.color = "violet"
                     mainText.text = "Tracking in progress";
                     stopTrackerButton.visible = true;
@@ -137,7 +141,12 @@ ApplicationWindow {
                 mainText.color = "violet"
                 mainText.text = "Mobile Tracking System";
                 mainText.font.pixelSize = 24;
-                myModel.writeUART("R track-end\n")
+
+                var payload = "R track-end\n";
+                myModel.payloadPrepare(payload, 'f');
+                // myModel.writeUART(preparedPayload);
+                // console.log(preparedPayload)
+
                 startTrackerButton.visible = true;
                 rect.width = 0;  // Reset width
                 rect.height = 0;  // Reset height

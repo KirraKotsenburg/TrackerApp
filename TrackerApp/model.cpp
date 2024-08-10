@@ -56,12 +56,50 @@ void Model::openUART() {
     }
 }
 
-void Model::writeUART(const QString &input) {
-    //track-start 448 261 528 381\n
-    QByteArray byteArray = input.toUtf8();
-    qDebug() << "byteArray: " << byteArray;
-    serialPort.write(byteArray);
+/*
+Prepares the payload for sending, by filling a buffer with the required header
+A pre-assigned region of memory of size (payload_bytes + 5) must be reserved. The first byte of this buffer is passed to char* buffer.
+The payload is a series of arbitrary bytes, total bytes in payload must be less than 62.
+messageID should match the purpose of the message, as defined by external documentation
+
+*/
+void Model::payloadPrepare(const QString& payload, char messageID) {
+    uint16_t payloadSize = static_cast<uint16_t>(payload.size());
+
+    int sum = 0;
+    for (QChar c : payload) {
+        sum += static_cast<uint8_t>(c.toLatin1());
+    }
+    uint8_t twosComplement = static_cast<uint8_t>(~sum + 1);
+
+    QByteArray buffer;
+    buffer.resize(5 + payloadSize);
+
+    buffer[0] = '!';
+    buffer[1] = static_cast<char>(payloadSize & 0xFF);
+    buffer[2] = static_cast<char>((payloadSize >> 8) & 0xFF);
+    buffer[3] = static_cast<char>(twosComplement);
+    buffer[4] = messageID;
+
+    // Properly encoded payload
+    QByteArray encodedPayload = payload.toUtf8();
+    memcpy(buffer.data() + 5, encodedPayload.data(), encodedPayload.size());
+
+    writeUART(buffer);
 }
+
+
+// void Model::writeUART(const QString &input) {
+//     //track-start 448 261 528 381\n
+//     QByteArray byteArray = input.toUtf8();
+//     qDebug() << "byteArray: " << byteArray;
+//     serialPort.write(byteArray);
+// }
+    void Model::writeUART(const QByteArray &data) {
+        qDebug() << "Writing data to UART: " << data;
+        serialPort.write(data);
+    }
+
 
 void Model::readUART() {
     while (serialPort.canReadLine()) {
