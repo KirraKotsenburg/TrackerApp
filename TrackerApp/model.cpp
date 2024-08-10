@@ -43,7 +43,7 @@ void Model::onConnect() {
  * COM6 is Nick's UART, COM5 is Char's
  */
 void Model::openUART() {
-    serialPort.setPortName("COM6"); // COM6 for Nick's, COM 5 for Char's
+    serialPort.setPortName("COM7"); // COM6 for Nick's, COM 5 for Char's
     serialPort.setBaudRate(QSerialPort::Baud115200); // Changed 9600 to 115200
     serialPort.setDataBits(QSerialPort::Data8);
     serialPort.setParity(QSerialPort::NoParity);
@@ -72,12 +72,12 @@ void Model::payloadPrepare(const QString& payload, char messageID) {
     QByteArray encodedPayload = payload.toUtf8();
     uint16_t payloadSize = static_cast<uint16_t>(encodedPayload.size());
 
-    // Calculate the 2's complement of the payload
+    // Calculate the 1's complement of the payload
     int sum = 0;
     for (char c : encodedPayload) {
         sum += static_cast<uint8_t>(c);
     }
-    uint8_t twosComplement = static_cast<uint8_t>(~sum + 1);
+    uint8_t onesComplement = static_cast<uint8_t>(0xFF - sum);
 
     // Allocate the buffer dynamically using QByteArray
     QByteArray buffer;
@@ -87,16 +87,23 @@ void Model::payloadPrepare(const QString& payload, char messageID) {
     buffer[0] = '!';
     buffer[1] = static_cast<char>(payloadSize & 0xFF); // Lower 8 bits of payloadSize
     buffer[2] = static_cast<char>((payloadSize >> 8) & 0xFF); // High 8 bits of payloadSize
-    buffer[3] = static_cast<char>(twosComplement);
+    buffer[3] = static_cast<char>(onesComplement);
     buffer[4] = messageID;
 
     // Copy the payload into the buffer starting from index 5
     memcpy(buffer.data() + 5, encodedPayload.data(), encodedPayload.size());
+    qDebug() << "Unpadded Buffer: " << buffer.toHex(' ');
+
+    // Add padding to reach a total of 32 bytes
+    int paddingSize = 32 - buffer.size()%32;
+    if (paddingSize > 0) {
+        buffer.append(QByteArray(paddingSize, 0x00)); // Append padding with 0x00 (null bytes)
+    }
 
     // Debugging outputs (Can remove/comment this out to make terminal output less busy)
     qDebug() << "Buffer 1 (Payload Size Low Byte): " << static_cast<int>(buffer[1]);
     qDebug() << "Buffer 2 (Payload Size High Byte): " << static_cast<int>(buffer[2]);
-    qDebug() << "Buffer 3 (Two's Complement): " << static_cast<int>(buffer[3]);
+    qDebug() << "Buffer 3 (One's Complement): " << static_cast<int>(buffer[3]);
     qDebug() << "Buffer 4 (Message ID): " << static_cast<int>(buffer[4]);
     qDebug() << "Payload Size: " << payloadSize;
     qDebug() << "Encoded Payload: " << encodedPayload;
