@@ -43,7 +43,7 @@ void Model::onConnect() {
  * COM6 is Nick's UART, COM5 is Char's
  */
 void Model::openUART() {
-    serialPort.setPortName("COM7"); // COM6 for Nick's, COM 5 for Char's
+    serialPort.setPortName("COM5"); // COM6 for Nick's, COM 5 for Char's
     serialPort.setBaudRate(QSerialPort::Baud115200); // Changed 9600 to 115200
     serialPort.setDataBits(QSerialPort::Data8);
     serialPort.setParity(QSerialPort::NoParity);
@@ -127,16 +127,61 @@ void Model::payloadPrepare(const QString& payload, char messageID) {
 * Should only be receiving Track-Fail message
 */
     void Model::readUART() {
-        while (serialPort.canReadLine()) {
-            QByteArray line = serialPort.readLine();
-            qDebug() << "Received UART data: " << line;
-            //Some sort of logic for a tracking failed signal from raspi
+        qDebug() << "In readUART";
+        static QByteArray payload;
+        static QByteArray header;
+        static bool headerReceived = false;
+        static uint16_t payloadSize = 0;
 
-            if(line == "D track-fail\n"){
-                emit trackFail();
-                qDebug() << "ERROR: Tracking has Failed!!!";
+
+        while (serialPort.bytesAvailable() > 0) {
+
+            // Read one byte at a time
+            char byte;
+            serialPort.read(&byte, 1);
+
+                if (byte == '!') {
+                    int headerSize = 4;
+                    int bytesRead = 0;
+                    int totalBytesRead = 0;
+
+                    header.resize(headerSize);
+
+                    while(totalBytesRead < headerSize){
+
+                        bytesRead = serialPort.read(&byte, (headerSize - totalBytesRead));
+
+                        header.append(byte);
+
+
+                        if(bytesRead > 0){
+                            totalBytesRead += bytesRead;
+                        }
+                    }
+
+                        // Gets the size out of the high and low bytes of header
+                    payloadSize = static_cast<uint16_t>(static_cast<unsigned char>(header[0])) |
+                                      (static_cast<uint16_t>(static_cast<unsigned char>(header[1])) << 8);
+                    bytesRead = 0;
+                    totalBytesRead = 0;
+                    qDebug() << "Payload size: " << payloadSize;
+                    header.resize(payloadSize);
+
+                    while(totalBytesRead < payloadSize){
+                        bytesRead = serialPort.read(&byte, (payloadSize - totalBytesRead));
+                        payload.append(byte);
+                        if(bytesRead > 0){
+                            totalBytesRead += bytesRead;
+                        }
+                    }
+                    qDebug() << "Outside the two while loops";
+                    qDebug() << "The payload: " << payload;
+                    if(payload ==  "D track-fail\n"){
+                                emit trackFail();
+                                qDebug() << "ERROR: Tracking has Failed!!!";
+                            }
+                }
             }
-        }
     }
 
 QImage Model::frame() const {
