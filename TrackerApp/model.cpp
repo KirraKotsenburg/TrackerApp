@@ -165,7 +165,7 @@ void Model::payloadPrepare(const QString& payload, char messageID) {
                     bytesRead = 0;
                     totalBytesRead = 0;
                     qDebug() << "Payload size: " << payloadSize;
-                    header.resize(payloadSize);
+                    payload.resize(payloadSize);
 
                     while(totalBytesRead < payloadSize){
                         bytesRead = serialPort.read(&byte, (payloadSize - totalBytesRead));
