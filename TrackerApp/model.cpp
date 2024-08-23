@@ -118,8 +118,8 @@ void Model::payloadPrepare(const QString& payload, char messageID) {
 * UART to the raspi
 */
     void Model::writeUART(const QByteArray &data) {
-        qDebug() << "Writing data to UART: " << data;
         serialPort.write(data);
+        qDebug() << "Writing data to UART: " << data;
     }
 
 /*
@@ -127,61 +127,55 @@ void Model::payloadPrepare(const QString& payload, char messageID) {
 * Should only be receiving Track-Fail message
 */
     void Model::readUART() {
-        qDebug() << "In readUART";
-        static QByteArray payload;
-        static QByteArray header;
-        static bool headerReceived = false;
-        static uint16_t payloadSize = 0;
+        // Read all available data from the UART buffer
+        QByteArray data = serialPort.readAll();
+        qDebug() << "Received UART data: " << data.toHex(' ');
 
+        // Ensure that the message starts with the correct header
+        if (data.size() < 5 || data[0] != '!') {
+            qDebug() << "Invalid message header";
+            return;
+        }
 
-        while (serialPort.bytesAvailable() > 0) {
+        // // Extract the payload size from the message
+        // uint16_t payloadSize = static_cast<uint8_t>(data[1]) | (static_cast<uint8_t>(data[2]) << 8);
+        // qDebug() << "Extracted payload size: " << payloadSize;
 
-            // Read one byte at a time
-            char byte;
-            serialPort.read(&byte, 1);
+        // // Ensure the data is long enough to include the full payload
+        // if (data.size() < (5 + payloadSize)) {
+        //     qDebug() << "Incomplete message received";
+        //     return;
+        // }
 
-                if (byte == '!') {
-                    int headerSize = 4;
-                    int bytesRead = 0;
-                    int totalBytesRead = 0;
+        // Extract the one's complement checksum
+        // uint8_t onesComplement = static_cast<uint8_t>(data[3]);
 
-                    header.resize(headerSize);
+        // Extract the message ID
+        char messageID = data[4];
+        qDebug() << "Message ID: " << static_cast<int>(messageID);
 
-                    while(totalBytesRead < headerSize){
+        // Extract the payload
+        // QByteArray payload = data.mid(5, payloadSize);
+        // qDebug() << "Extracted payload: " << payload;
 
-                        bytesRead = serialPort.read(&byte, (headerSize - totalBytesRead));
+        // Verify checksum
+        // int sum = 0;
+        // for (char c : payload) {
+        //     sum += static_cast<uint8_t>(c);
+        // }
+        // uint8_t calculatedChecksum = static_cast<uint8_t>(0xFF - sum);
+        // if (calculatedChecksum != onesComplement) {
+        //     qDebug() << "Checksum mismatch";
+        //     return;
+        // }
 
-                        header.append(byte);
-
-
-                        if(bytesRead > 0){
-                            totalBytesRead += bytesRead;
-                        }
-                    }
-
-                        // Gets the size out of the high and low bytes of header
-                    payloadSize = static_cast<uint16_t>(static_cast<unsigned char>(header[0])) |
-                                      (static_cast<uint16_t>(static_cast<unsigned char>(header[1])) << 8);
-                    bytesRead = 0;
-                    totalBytesRead = 0;
-                    qDebug() << "Payload size: " << payloadSize;
-                    payload.resize(payloadSize);
-
-                    while(totalBytesRead < payloadSize){
-                        bytesRead = serialPort.read(&byte, (payloadSize - totalBytesRead));
-                        payload.append(byte);
-                        if(bytesRead > 0){
-                            totalBytesRead += bytesRead;
-                        }
-                    }
-                    qDebug() << "Outside the two while loops";
-                    qDebug() << "The payload: " << payload;
-                    if(payload ==  "D track-fail\n"){
-                                emit trackFail();
-                                qDebug() << "ERROR: Tracking has Failed!!!";
-                            }
-                }
-            }
+        // Emit the appropriate signal based on the message ID or payload content
+        if (messageID == 'g') {
+            emit trackFail();
+            qDebug() << "ERROR: Tracking has Failed!!!";
+        } else {
+            qDebug() << "Received unknown message ID: " << static_cast<int>(messageID);
+        }
     }
 
 QImage Model::frame() const {
