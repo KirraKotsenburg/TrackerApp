@@ -19,7 +19,9 @@ public:
     Q_INVOKABLE void setData(int value);  // Setter for the data property
     Q_INVOKABLE void onConnect();
     Q_INVOKABLE void openUART();
-    Q_INVOKABLE void writeUART(const QString &input);
+    Q_INVOKABLE void payloadPrepare(const QString& payload, char messageID);
+    //Q_INVOKABLE void writeUART(const QString &input);
+    Q_INVOKABLE void writeUART(const QByteArray &data);
     Q_INVOKABLE void readUART();
     Q_INVOKABLE void saveFrame(const QString &fileName); // Method to save the frame
     QImage frame() const;

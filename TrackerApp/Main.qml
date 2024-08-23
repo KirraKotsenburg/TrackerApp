@@ -12,7 +12,7 @@ ApplicationWindow {
 
     // Setting a Material style theme
     Material.theme: Material.Dark  // Choose between Light, Dark, or System themes
-    Material.primary: "0096FF"
+    Material.primary: Material.Indigo
 
     function updateImageSource() {
         videoFrame.source = "image://imageProvider/frame?cache=" + Date.now();
@@ -56,9 +56,6 @@ ApplicationWindow {
             source: "image://imageProvider/frame"  // Correct provider path
             visible: true
             fillMode: Image.PreserveAspectFit
-            // onSourceChanged: {
-            //     console.log("Frame source changed to: " + videoFrame.source);
-            // }
 
             MouseArea {
                 id: mouseArea
@@ -82,10 +79,12 @@ ApplicationWindow {
                     var p1 = Qt.point(Math.floor(rect.x), Math.floor(rect.y));
                     var p2 = Qt.point(Math.floor(rect.x + rect.width), Math.floor(rect.y + rect.height));
                     console.log("Coordinates: ", p1, p2);
-                    // You can use p1 and p2 to send coordinates over UART
-                    myModel.writeUART("R track-start " + p1.x + " " + p1.y + " " + p2.x + " " + p2.y + "\n");
-                    console.log("track-start " + p1.x + " " + p1.y + " " + p2.x + " " + p2.y + "\n")
-                    mainText.color = "violet"
+
+                // These two lines will send the payload over UART
+                    var payload = "R track-start " + p1.x + " " + p1.y + " " + p2.x + " " + p2.y + "\n";
+                    myModel.payloadPrepare(payload, 101); // 101 is the ACII value of 'e'
+
+                    mainText.color = Material.primaryColor
                     mainText.text = "Tracking in progress";
                     stopTrackerButton.visible = true;
                     startTrackerButton.visible = false;
@@ -113,7 +112,7 @@ ApplicationWindow {
             onClicked: {
                 startTrackerButton.visible = false;
                 mainText.font.pixelSize = 24;
-                mainText.color = "violet"
+                mainText.color = Material.primaryColor
                 mainText.text = "Draw bounding box around object you would like to track."
                 // TODO: write logic to allow user to draw bbox and get p1 and p2 coordinates from it
                 // pass message over uart with x1,y1 x2,y2 data
@@ -134,10 +133,14 @@ ApplicationWindow {
             Material.elevation: 2  // Apply elevation for shadow effect
             onClicked: {
                 stopTrackerButton.visible = false;
-                mainText.color = "violet"
+                mainText.color = Material.primaryColor
                 mainText.text = "Mobile Tracking System";
                 mainText.font.pixelSize = 24;
-                myModel.writeUART("R track-end\n")
+
+            // These two lines will send the payload over UART
+                var payload = "R track-end\n";
+                myModel.payloadPrepare(payload, 102);// 102 is the ACII value of 'f'
+
                 startTrackerButton.visible = true;
                 rect.width = 0;  // Reset width
                 rect.height = 0;  // Reset height
