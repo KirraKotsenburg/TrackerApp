@@ -14,7 +14,7 @@ class Model : public QObject {
     Q_PROPERTY(QImage frame READ frame NOTIFY frameChanged)
 
 public:
-    explicit Model(int cameraIndex, QObject *parent = nullptr); // Constructor with default parameter for parent
+    explicit Model(QObject *parent = nullptr); // Constructor with default parameter for parent
     int data() const; // Getter for the data property
     Q_INVOKABLE void setData(int value);  // Setter for the data property
     Q_INVOKABLE void onConnect();
@@ -25,6 +25,8 @@ public:
     Q_INVOKABLE void readUART();
     Q_INVOKABLE void saveFrame(const QString &fileName); // Method to save the frame
     QImage frame() const;
+    int numCams;
+    Q_INVOKABLE int getNumCams();
 
 public slots:
     void startVideo();

@@ -1,12 +1,16 @@
 #include <QDebug>
 #include "model.h"
+#include <QCameraDevice>
+#include <QMediaDevices>
 
-Model::Model( int cameraIndex, QObject *parent)
+Model::Model(QObject *parent)
     : QObject(parent),
     m_data(0), // Initialize m_data with a default value (0 here)
-    cap(cameraIndex) // What port used determines this number // "USB2.0 PC CAMERA"
+    cap(0) // What port used determines this number // "USB2.0 PC CAMERA"
 {
-
+    const QList<QCameraDevice> cameras = QMediaDevices::videoInputs();
+    numCams = cameras.size();
+    qDebug() << "In model. Number of Cams: " << numCams;
     cap.set(cv::CAP_PROP_FRAME_WIDTH, 640);
     cap.set(cv::CAP_PROP_FRAME_HEIGHT, 480);
 
@@ -19,6 +23,10 @@ Model::Model( int cameraIndex, QObject *parent)
 
     connect(&timer, &QTimer::timeout, this, &Model::startVideo);
 
+}
+
+int Model::getNumCams(){
+    return numCams;
 }
 
 int Model::data() const {

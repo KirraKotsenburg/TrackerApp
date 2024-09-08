@@ -3,22 +3,7 @@
 #include <QQmlContext>
 #include "model.h"
 #include "imageprovider.h"
-#include <QCameraDevice>
-#include <QMediaDevices>
 
-int getCameraIndex (std::string cameraName){
-    const QList<QCameraDevice> cameras = QMediaDevices::videoInputs();
-    int index = -1;
-    for (const QCameraDevice &cameraDevice : cameras) {
-        qDebug() << "Camera Device Description: " << cameraDevice.description();
-        if (cameraDevice.description() == "USB2.0 PC CAMERA"){
-            return index;
-        }
-        index++;
-     }
-
-    return -2;
-}
 
 int main(int argc, char *argv[]) {
     // QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
@@ -26,14 +11,7 @@ int main(int argc, char *argv[]) {
 
     QQmlApplicationEngine engine;
 
-    std::string cameraName = "USB2.0 PC CAMERA";
-
-    int cameraIndex = getCameraIndex(cameraName);
-    if (cameraIndex == -2){
-        qDebug() << "Camera not found!";
-    }
-
-    Model myModel(cameraIndex); // Create an instance of Model
+    Model myModel; // Create an instance of Model
     // Expose the Model instance to QML
     engine.rootContext()->setContextProperty("myModel", &myModel);
 

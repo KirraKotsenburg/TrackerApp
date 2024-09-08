@@ -31,6 +31,33 @@ ApplicationWindow {
             color: Material.primaryColor  // Use accent color for the text
         }
 
+        ComboBox{
+            id: comboBox
+            textRole: "name"
+            model: ListModel {
+                id: comboBoxModel
+                // Initially empty; will be populated dynamically
+            }
+
+
+            onCurrentIndexChanged: {
+                var selectedIndex = comboBoxModel.get(comboBox.currentIndex).index
+                console.log("Selected Camera index:", selectedIndex);
+            }
+            width: 200
+            anchors.centerIn: parent
+        }
+
+        Component.onCompleted: {
+                // Assuming you have set up the model in the QML context
+                // Populate the ComboBox with camera indexes from the C++ model
+                var cameraIndexes = myModel.getNumCams();// Call C++ method to get camera indexes
+                console.log("We here in the on complete. Camera indexes: ", cameraIndexes);
+                for (var i = 0; i < cameraIndexes; ++i) {
+                   comboBoxModel.append({ index: i, name: i.toString() })
+                }
+            }
+
         Button {
             id: connectButton
             text: "Connect Video"
