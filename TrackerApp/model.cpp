@@ -1,11 +1,12 @@
 #include <QDebug>
 #include "model.h"
 
-Model::Model(QObject *parent)
+Model::Model( int cameraIndex, QObject *parent)
     : QObject(parent),
     m_data(0), // Initialize m_data with a default value (0 here)
-    cap(0) // What port used determines this number // "USB2.0 PC CAMERA"
+    cap(cameraIndex) // What port used determines this number // "USB2.0 PC CAMERA"
 {
+
     cap.set(cv::CAP_PROP_FRAME_WIDTH, 640);
     cap.set(cv::CAP_PROP_FRAME_HEIGHT, 480);
 
