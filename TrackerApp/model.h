@@ -27,6 +27,8 @@ public:
     QImage frame() const;
     int numCams;
     Q_INVOKABLE int getNumCams();
+    Q_INVOKABLE void accessCamera(int camIndex);
+    Q_INVOKABLE void disconnectCamera();
 
 public slots:
     void startVideo();

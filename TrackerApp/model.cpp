@@ -5,12 +5,29 @@
 
 Model::Model(QObject *parent)
     : QObject(parent),
-    m_data(0), // Initialize m_data with a default value (0 here)
-    cap(0) // What port used determines this number // "USB2.0 PC CAMERA"
+    m_data(0) // Initialize m_data with a default value (0 here)
+    // cap(0) // What port used determines this number // "USB2.0 PC CAMERA"
 {
     const QList<QCameraDevice> cameras = QMediaDevices::videoInputs();
     numCams = cameras.size();
     qDebug() << "In model. Number of Cams: " << numCams;
+    // cap.set(cv::CAP_PROP_FRAME_WIDTH, 640);
+    // cap.set(cv::CAP_PROP_FRAME_HEIGHT, 480);
+
+    // if (!cap.isOpened()) {
+    //     qDebug() << "Cannot open webcam";
+    // }
+    // else {
+    //     qDebug() << "Webcam opened";
+    // }
+
+    // connect(&timer, &QTimer::timeout, this, &Model::startVideo);
+
+}
+
+void Model::accessCamera(int camIndex)
+{
+    cap.open(camIndex);
     cap.set(cv::CAP_PROP_FRAME_WIDTH, 640);
     cap.set(cv::CAP_PROP_FRAME_HEIGHT, 480);
 
@@ -22,7 +39,11 @@ Model::Model(QObject *parent)
     }
 
     connect(&timer, &QTimer::timeout, this, &Model::startVideo);
+}
 
+void Model::disconnectCamera()
+{
+    cap.release();
 }
 
 int Model::getNumCams(){
