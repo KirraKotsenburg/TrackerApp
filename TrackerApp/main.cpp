@@ -6,7 +6,6 @@
 
 
 int main(int argc, char *argv[]) {
-    // QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QGuiApplication app(argc, argv);
 
     QQmlApplicationEngine engine;
@@ -22,7 +21,6 @@ int main(int argc, char *argv[]) {
     // Connect frameChanged signal to update image in the provider
     QObject::connect(&myModel, &Model::frameChanged, [&myModel, imageProvider]() {
         imageProvider->setImage(myModel.frame());
-        //qDebug() << "Frame changed and image provider updated";
     });
 
     // Connect imageUpdated signal to a QML slot

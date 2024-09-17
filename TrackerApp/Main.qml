@@ -47,7 +47,6 @@ ApplicationWindow {
                 myModel.accessCamera(selectedIndex);
                 myModel.onConnect();
                 startTrackerButton.visible = true;
-                //stopTrackerButton.visible
             }
             width: 200
             anchors.bottom: parent.bottom
@@ -62,24 +61,6 @@ ApplicationWindow {
                    comboBoxModel.append({ index: i, name: i.toString() })
                 }
             }
-
-        // Button {
-        //     id: connectButton
-        //     text: "Connect Video"
-        //     width: 150  // Width of the button in pixels
-        //     height: 50   // Height of the button in pixels
-        //     highlighted: true  // Highlight the button with accent color
-        //     Material.elevation: 2  // Apply elevation for shadow effect
-        //     onClicked: {
-        //         myModel.onConnect(); // For Video Visibility after button click
-        //         myModel.openUART(); // For read and write to UART
-        //         connectButton.visible = false;
-        //         startTrackerButton.visible = true;
-        //     }
-        //     anchors.horizontalCenter: parent.horizontalCenter
-        //     Material.background: Material.primaryColor// Set the background color to a custom color
-        //     Material.foreground: "white" // Set the text color to white
-        // }
 
         Image {
             id: videoFrame
@@ -148,8 +129,6 @@ ApplicationWindow {
                 mainText.font.pixelSize = 24;
                 mainText.color = Material.primaryColor
                 mainText.text = "Draw bounding box around object you would like to track."
-                // TODO: write logic to allow user to draw bbox and get p1 and p2 coordinates from it
-                // pass message over uart with x1,y1 x2,y2 data
                 mouseArea.enabled = true;  // Enable mouse area for drawing bounding box
                 comboBox.enabled = false;
             }
