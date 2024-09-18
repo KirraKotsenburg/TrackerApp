@@ -2,14 +2,20 @@
 #include "model.h"
 #include <QCameraDevice>
 #include <QMediaDevices>
+#include <QSerialPortInfo>
+
 
 Model::Model(QObject *parent)
     : QObject(parent)
 {
     const QList<QCameraDevice> cameras = QMediaDevices::videoInputs();
     numCams = cameras.size();
+    QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
+    qDebug() << "Number of Ports available: " << ports.size();
+    foreach (const QSerialPortInfo &portInfo, ports) {
+        availPorts.push_back(portInfo.portName());
+    }
 }
-
 
 void Model::accessCamera(int camIndex)
 {
@@ -37,6 +43,13 @@ int Model::getNumCams(){
     return numCams;
 }
 
+int Model::getNumPorts() {
+    return availPorts.size();
+}
+
+std::vector<QString> Model::getAvailComPorts() {
+    return availPorts;
+}
 
 void Model::onConnect() {
     qDebug() << "Connecting...\n";
@@ -45,8 +58,8 @@ void Model::onConnect() {
 }
 
 
-void Model::openUART() {
-    serialPort.setPortName("COM5"); // COM6 for Nick's, COM 5 for Char's
+void Model::openUART(QString comPort) {
+    serialPort.setPortName(comPort);
     serialPort.setBaudRate(QSerialPort::Baud115200); // Changed 9600 to 115200
     serialPort.setDataBits(QSerialPort::Data8);
     serialPort.setParity(QSerialPort::NoParity);
@@ -111,33 +124,33 @@ void Model::payloadPrepare(const QString& payload, char messageID) {
     writeUART(buffer);
 }
 
-    void Model::writeUART(const QByteArray &data) {
-        serialPort.write(data);
-        qDebug() << "Writing data to UART: " << data;
+void Model::writeUART(const QByteArray &data) {
+    serialPort.write(data);
+    qDebug() << "Writing data to UART: " << data;
+}
+
+void Model::readUART() {
+    // Read all available data from the UART buffer
+    QByteArray data = serialPort.readAll();
+    qDebug() << "Received UART data: " << data.toHex(' ');
+
+    // Ensure that the message starts with the correct header
+    if (data.size() < 5 || data[0] != '!') {
+        qDebug() << "Invalid message header";
+        return;
     }
 
-    void Model::readUART() {
-        // Read all available data from the UART buffer
-        QByteArray data = serialPort.readAll();
-        qDebug() << "Received UART data: " << data.toHex(' ');
+    char messageID = data[4];
+    qDebug() << "Message ID: " << static_cast<int>(messageID);
 
-        // Ensure that the message starts with the correct header
-        if (data.size() < 5 || data[0] != '!') {
-            qDebug() << "Invalid message header";
-            return;
-        }
-
-        char messageID = data[4];
-        qDebug() << "Message ID: " << static_cast<int>(messageID);
-
-        // Emit the appropriate signal based on the message ID or payload content
-        if (messageID == 'g') {
-            emit trackFail();
-            qDebug() << "ERROR: Tracking has Failed!!!";
-        } else {
-            qDebug() << "Received unknown message ID: " << static_cast<int>(messageID);
-        }
+    // Emit the appropriate signal based on the message ID or payload content
+    if (messageID == 'g') {
+        emit trackFail();
+        qDebug() << "ERROR: Tracking has Failed!!!";
+    } else {
+        qDebug() << "Received unknown message ID: " << static_cast<int>(messageID);
     }
+}
 
 
 QImage Model::frame() const {

@@ -7,6 +7,7 @@
 #include <QTimer>
 #include <opencv2/opencv.hpp>
 #include <QLabel>
+#include <vector>
 
 class Model : public QObject {
     Q_OBJECT
@@ -25,7 +26,7 @@ public:
  * Opens Serial Port for UART, sets the Baud, data bits,
  * parity bits, and any stop bits.
  */
-    Q_INVOKABLE void openUART();
+    Q_INVOKABLE void openUART(QString comPort);
 
 /*
 * Prepares the payload for sending, by filling a buffer with the required header
@@ -57,6 +58,8 @@ public:
 * Returns the number of cameras on user's device.
 */
     Q_INVOKABLE int getNumCams();
+    Q_INVOKABLE int getNumPorts();
+    Q_INVOKABLE std::vector<QString> getAvailComPorts();
 
 /*
  * Opens camera that user selects via drop down and sets the
@@ -95,6 +98,7 @@ private:
     cv::VideoCapture cap;
     QTimer timer;
     QImage m_frame;
+    std::vector<QString> availPorts;
 };
 
 #endif // MODEL_H
