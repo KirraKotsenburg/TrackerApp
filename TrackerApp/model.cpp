@@ -10,6 +10,7 @@ Model::Model(QObject *parent)
 {
     const QList<QCameraDevice> cameras = QMediaDevices::videoInputs();
     numCams = cameras.size();
+
     QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
     qDebug() << "Number of Ports available: " << ports.size();
     foreach (const QSerialPortInfo &portInfo, ports) {
@@ -38,7 +39,6 @@ void Model::disconnectCamera()
     cap.release();
 }
 
-
 int Model::getNumCams(){
     return numCams;
 }
@@ -57,8 +57,21 @@ void Model::onConnect() {
     timer.start(1000 / 30); // 30 fps
 }
 
+bool Model::portOpen() {
+    return serialPort.isOpen();
+}
 
-void Model::openUART(QString comPort) {
+bool Model::getCamOpen() {
+    return camOpen;
+}
+
+int Model::openUART(QString comPort) {
+    // Close the serial port if it's already open
+    if (serialPort.isOpen()) {
+        serialPort.close();
+        qDebug() << "Closed existing UART connection.";
+    }
+
     serialPort.setPortName(comPort);
     serialPort.setBaudRate(QSerialPort::Baud115200); // Changed 9600 to 115200
     serialPort.setDataBits(QSerialPort::Data8);
@@ -71,10 +84,11 @@ void Model::openUART(QString comPort) {
     // Open serialPort
     if (!serialPort.open(QIODevice::ReadWrite)) {
         qDebug() << "Error opening serial port.\n";
+        return 1;
     }
-    else {
-        qDebug() << "Successfully opened UART port on COM.\n";
-    }
+
+    qDebug() << "Successfully opened UART port on COM.\n";
+    return 0;
 }
 
 
@@ -163,6 +177,7 @@ void Model::startVideo() {
     cap >> frame;
     if (!frame.empty()) {
         m_frame = matToQImage(frame);
+        camOpen = true;
         emit frameChanged();
         emit imageUpdated();
     } else {

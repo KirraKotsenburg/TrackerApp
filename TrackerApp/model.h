@@ -20,13 +20,15 @@ public:
  * Starts the timer to return frame at rate of 30 FPS.
 */
     Q_INVOKABLE void onConnect();
+    Q_INVOKABLE bool portOpen();
+    Q_INVOKABLE bool getCamOpen();
 
 /*
  * Function for setting up UART:
  * Opens Serial Port for UART, sets the Baud, data bits,
  * parity bits, and any stop bits.
  */
-    Q_INVOKABLE void openUART(QString comPort);
+    Q_INVOKABLE int openUART(QString comPort);
 
 /*
 * Prepares the payload for sending, by filling a buffer with the required header
@@ -53,6 +55,7 @@ public:
 */
     QImage frame() const;
     int numCams;
+    bool camOpen = false;
 
 /*
 * Returns the number of cameras on user's device.

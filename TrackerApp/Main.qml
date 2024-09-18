@@ -31,6 +31,17 @@ ApplicationWindow {
             color: Material.primaryColor  // Use accent color for the text
         }
 
+        Text {
+            id: userMessage
+            text: ""  // Default error message (can be modified dynamically)
+            font.pixelSize: 16  // Smaller size for the error message
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: mainText.bottom  // Position below main text
+            anchors.topMargin: 10  // Add some space between the texts
+            color: "green"
+            visible: false  // Initially hidden
+        }
+
         // Positioning the Row at the bottom
         Row {
             anchors.horizontalCenter: parent.horizontalCenter
@@ -51,7 +62,9 @@ ApplicationWindow {
                     console.log("Selected Camera index:", selectedIndex);
                     myModel.accessCamera(selectedIndex);
                     myModel.onConnect();
-                    startTrackerButton.visible = true;
+                    if (myModel.portOpen()){
+                        startTrackerButton.visible = true;
+                    }
                 }
                 width: 200
                 // anchors.bottom: parent.bottom
@@ -68,7 +81,20 @@ ApplicationWindow {
                 onCurrentIndexChanged: {
                     var selectedComPort = comboComBoxModel.get(comboComBox.currentIndex).name
                     console.log("user selected: ", selectedComPort)
-                    myModel.openUART(selectedComPort);
+                    if (myModel.openUART(selectedComPort) === 1) {
+                        // update text to provide error
+                        userMessage.text = "UART did not open. Select a different COM port."
+                        userMessage.color = "red"
+                        userMessage.visible = true
+                    }
+                    else {
+                        userMessage.color = "green"
+                        userMessage.visible = true
+                        userMessage.text = "UART opened successfully"
+                        if (myModel.getCamOpen()) {
+                            startTrackerButton.visible = true;
+                        }
+                    }
                 }
                 width: 200
                 // anchors.bottom: parent.bottom
@@ -88,6 +114,8 @@ ApplicationWindow {
                     mainText.text = "Draw bounding box around object you would like to track."
                     mouseArea.enabled = true;  // Enable mouse area for drawing bounding box
                     comboCameraBox.enabled = false;
+                    comboComBox.enabled = false
+                    userMessage.visible = false
                 }
                 // anchors.right: parent.right
                 // anchors.bottom: parent.bottom
@@ -117,6 +145,7 @@ ApplicationWindow {
                     rect.width = 0;  // Reset width
                     rect.height = 0;  // Reset height
                     comboCameraBox.enabled = true;
+                    comboComBox.enabled = true
                 }
                 // anchors.right: parent.right
                 // anchors.bottom: parent.bottom
