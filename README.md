@@ -1,6 +1,19 @@
-# TrackerApp
-Mobile Tracking project app for user
+# Overview
+This project is for a user interface that works along side a Mobile Tracking System developed for a Raspberry pi that is mounted to a drone. You can access that project [here](https://github.com/csaethre19/MobileTargetTracking). 
 
+# Usage
+- This application needs the [SoloGood FPV Receiver](https://www.amazon.com/gp/product/B08YJGCVJS/ref=ox_sc_act_image_2?smid=A2XZ0PQGR3TYBH&psc=1) to receive video from the drone. This is connected to the computer running the application via USB.
+- This application also requires the [Nova swarm dongle ground station](https://redmoredynamics.com/) that is connected to the users.
+- To run the application you can navigate to the [release section on GitHub](https://github.com/KirraKotsenburg/TrackerApp/releases) and download the zip file, extract, and run the appTrackerApp.exe
+- When you launch the program you can select the camera port and the COM port. 
+- <img src="images/mts-home.png" width="250" height="300" /> <br>
+      - When the receivers index is selected for camera port you should see a static screen. <br>
+      - To determine which COM device you should select go to your computers Device Manager and plug in the Nova swarm dongle to determine which COM name it comes up as and select that one in the app. 
+
+- Once a successful UART connection is made and the video from the drone is being displayed within the user interface, initiate tracking by clicking the Start Tracking button and as instructed draw a box around an object within the frame. If tracking is successful a blue bounding box will stay around the specified object otherwise a Tracking Failed message will be displayed and the user can initiate tracking again.
+
+
+# Dev Set up
 [Qt Creator Open Source download link](https://www.qt.io/download-qt-installer-oss?utm_referrer=https%3A%2F%2Fwww.qt.io%2Fdownload-open-source)
 
   After you have downloaded QT Creator, select the version you want installed in the QT Maintanence app
