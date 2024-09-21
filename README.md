@@ -103,3 +103,14 @@ Add the variable name and your value e.g. OPENCV_PATH for variable name and C:/o
 
 
   Step 16: You're ready to use OpenCV and QT Creator together now!
+
+  # Release Steps
+
+  1. Build app in Qt Creator in Release mode
+  2. Run in the directory of the release folder where .exe file is for app: C:\Qt\6.7.2\mingw_64\bin\windeployqt.exe appTrackerApp.exe
+      - Path depends on where your Qt installation is located and what version, just find the windeployqt.exe
+      - This copies over the Qt library dll's that are needed
+3. Copy all contents of release folder (located in the build folder of project directory) plus all dlls for opencv (C:\opencv\build\bin or wherever your opencv installation is located) to another folder and zip it e.g. trackerApp-v1-release-win
+4. Copy all dll's from C:\Qt\6.7.2\mingw_64\bin (Also depends on your installation of Qt)
+5. Zip folder
+6. Add a new release on GitHub and add this zip
