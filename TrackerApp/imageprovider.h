@@ -5,6 +5,8 @@
 #include <QImage>
 
 /**
+ * @authors Kirra Kotsenburg, Charlotte Saethre
+ * @date 10/1/2024
  * @brief Class to render images in QML dynamically.
  *
  * This class is responsible for providing images (specifically QImage objects)
