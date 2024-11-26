@@ -204,12 +204,12 @@ ApplicationWindow {
                     console.log("Coordinates: ", p1, p2);
 
                     // These two lines will send the payload over UART
-					myModel.waitingResponse = true;
+                    myModel.setWaitingResponse(true);
+                    var waiting = myModel.getWaitingResponse();
 					var payload = "R track-start " + p1.x + " " + p1.y + " " + p2.x + " " + p2.y + "\n";
-					while (waitingResponse) {
+                    while (myModel.getWaitingResponse()) {
 						myModel.payloadPrepare(payload, 101); // 101 is the ACII value of 'e'
-						// wait 10 seconds...
-						// TODO: Add timer here
+                        // TODO: wait 10 seconds...
 					}
 
                     mainText.color = Material.primaryColor

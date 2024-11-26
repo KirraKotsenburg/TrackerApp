@@ -65,6 +65,14 @@ bool Model::getCamOpen() {
     return camOpen;
 }
 
+bool Model::getWaitingResponse() {
+    return waitingResponse;
+}
+
+void Model::setWaitingResponse(bool waiting) {
+    this->waitingResponse = waiting;
+}
+
 int Model::openUART(QString comPort) {
     // Close the serial port if it's already open
     if (serialPort.isOpen()) {

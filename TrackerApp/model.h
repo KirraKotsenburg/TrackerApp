@@ -90,6 +90,17 @@ public:
     Q_INVOKABLE bool getCamOpen();
 
     /**
+     * Gets whether we are waiting for a response.
+     * @return True if we are waiting for a response, False otherwise.
+     */
+    Q_INVOKABLE bool getWaitingResponse();
+
+    /**
+     * Sets whether we are waiting for a response.
+     */
+    Q_INVOKABLE void setWaitingResponse(bool waiting);
+
+    /**
      * Function for setting up UART:
      * Opens Serial Port for UART, sets the Baud, data bits,
      * parity bits, and any stop bits.
