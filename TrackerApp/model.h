@@ -148,6 +148,8 @@ public:
      * False otherwise.
      */
     bool camOpen = false;
+	
+	bool waitingResponse = false;
 
     /**
     * Returns the number of cameras on user's device.

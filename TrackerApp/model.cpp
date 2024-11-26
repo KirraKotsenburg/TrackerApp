@@ -161,7 +161,16 @@ void Model::readUART() {
     if (messageID == 'g') {
         emit trackFail();
         qDebug() << "ERROR: Tracking has Failed!!!";
-    } else {
+		// send back ACK
+		payloadPrepare("ACK", 101); // msg id doesn't matter here - we don't check on raspi...
+		qDebug() << "Sending ACK";
+    } 
+	else if (messageID == 'z'){
+		// TODO: if we receive ACK that means that raspi got our track-start command and we want to emit signal to update UI now
+		// setting waitingResponse to false here will get us out of the while loop to carry on with the UI changes...
+		waitingResponse = false;
+	}
+	else {
         qDebug() << "Received unknown message ID: " << static_cast<int>(messageID);
     }
 }
