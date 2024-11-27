@@ -59,6 +59,7 @@
 class Model : public QObject {
     Q_OBJECT
     Q_PROPERTY(QImage frame READ frame NOTIFY frameChanged)
+    Q_PROPERTY(bool waitingResponse READ getWaitingResponse NOTIFY waitingResponseChanged)
 
 public:
 
@@ -100,6 +101,7 @@ public:
      */
     Q_INVOKABLE void setWaitingResponse(bool waiting);
 
+    Q_INVOKABLE void sendPayload(const QString& payload);
     /**
      * Function for setting up UART:
      * Opens Serial Port for UART, sets the Baud, data bits,
@@ -228,6 +230,10 @@ signals:
      * @see Main.qml
      */
     void trackFail();
+
+    void waitingResponseChanged();
+
+    void sendPayloadFailed();
 
 private:
 

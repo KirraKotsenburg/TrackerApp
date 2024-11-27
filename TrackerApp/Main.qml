@@ -198,26 +198,33 @@ ApplicationWindow {
                 }
 
                 onReleased: {
-                    mainText.text = "Tracking in progress";
+                    mainText.text = "Sending bounding box...";
                     var p1 = Qt.point(Math.floor(rect.x), Math.floor(rect.y));
                     var p2 = Qt.point(Math.floor(rect.x + rect.width), Math.floor(rect.y + rect.height));
                     console.log("Coordinates: ", p1, p2);
 
                     // These two lines will send the payload over UART
-                    myModel.setWaitingResponse(true);
-                    var waiting = myModel.getWaitingResponse();
 					var payload = "R track-start " + p1.x + " " + p1.y + " " + p2.x + " " + p2.y + "\n";
-                    while (myModel.getWaitingResponse()) {
-						myModel.payloadPrepare(payload, 101); // 101 is the ACII value of 'e'
-                        // TODO: wait 10 seconds...
-					}
+                    myModel.sendPayload(payload);
+                    myModel.waitingResponseChanged.connect(function() {
+                        if (!myModel.waitingResponse) {
+                            mainText.color = Material.primaryColor;
+                            mainText.text = "Tracking in progress";
+                            stopTrackerButton.visible = true;
+                            startTrackerButton.visible = false;
+                            mouseArea.enabled = false;
+                        }
+                    });
 
-                    mainText.color = Material.primaryColor
-                    mainText.text = "Tracking in progress";
-                    stopTrackerButton.visible = true;
-                    startTrackerButton.visible = false;
-                    mouseArea.enabled = false;
-                    stopTrackerButton.visible = true;
+                    myModel.sendPayloadFailed.connect(function() {
+                        mainText.color = "red";
+                        mainText.text = "Failed to start tracking. Please try again.";
+                        startTrackerButton.visible = true;
+                        stopTrackerButton.visible = false;
+                        mouseArea.enabled = false;
+                        rect.width = 0;  // Reset width
+                        rect.height = 0;  // Reset height
+                    });
                 }
 
                 Rectangle {

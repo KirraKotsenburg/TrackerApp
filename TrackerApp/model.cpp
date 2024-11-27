@@ -73,6 +73,43 @@ void Model::setWaitingResponse(bool waiting) {
     this->waitingResponse = waiting;
 }
 
+#include <QTimer>
+#include <iostream>
+
+void Model::sendPayload(const QString& payload) {
+    waitingResponse = true;
+    emit waitingResponseChanged(); // Notify QML that the flag is now true
+
+    int retryCount = 0;                // Retry counter
+    const int maxRetries = 1;         // Maximum number of retries
+
+    QTimer* retryTimer = new QTimer(this);
+    retryTimer->setInterval(10000); // 10 seconds
+
+    connect(retryTimer, &QTimer::timeout, this, [this, payload, retryTimer, &retryCount, maxRetries]() {
+        if (waitingResponse) {
+            if (retryCount < maxRetries) {
+                payloadPrepare(payload, 101);
+                std::cout << "Retrying payload send... Attempt: " << (retryCount + 1) << std::endl;
+                retryCount++;
+            } else {
+                std::cout << "Max retries reached. Stopping retries." << std::endl;
+                waitingResponse = false;  // Force stopping if no response
+                retryTimer->stop();
+                retryTimer->deleteLater();
+                emit sendPayloadFailed();
+            }
+        } else {
+            retryTimer->stop();
+            retryTimer->deleteLater();
+            std::cout << "Response received, stopping retries." << std::endl;
+        }
+    });
+
+    retryTimer->start();
+}
+
+
 int Model::openUART(QString comPort) {
     // Close the serial port if it's already open
     if (serialPort.isOpen()) {
